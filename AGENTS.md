@@ -19,13 +19,3 @@ Dokumen ini mendefinisikan batas-batas pengerjaan, standarisasi teknologi, dan p
 
 ### 2. TUI Layer
 - Ketika membuat baris komponen interaktif di CLI, pastikan komponen tersebut mematuhi batasan tinggi terminal aktif agar tidak terjadi overflow teks.
-
----
-
-## 🔄 Sinkronisasi Project Management (n8n & Project Board Hook)
-Setiap kali AI Agent berhasil menyelesaikan satu checkpoint tugas yang tertera di `ROADMAP.md` dan melakukan Git Commit, AI diwajibkan untuk mengirimkan sinyal HTTP Post ke Webhook n8n untuk memperbarui status papan kerja (Project Board):
-
-```bash
-curl -X POST [https://n8n.internal.workflow/v1/oops-sync](https://n8n.internal.workflow/v1/oops-sync) \
-  -H "Content-Type: application/json" \
-  -d '{"taskId": "1.1", "status": "COMPLETED", "agent": "AI-Agent-Core"}'
