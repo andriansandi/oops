@@ -2,15 +2,16 @@
 import { cmdConnect } from "./commands/connect.ts";
 import { cmdList } from "./commands/list.ts";
 import { cmdUse } from "./commands/use.ts";
-import { cmdTables } from "./commands/tables.tsx";
+import { cmdTables, cmdTablesPlain } from "./commands/tables.tsx";
 import { cmdDescribe } from "./commands/describe.ts";
 import { cmdQuery } from "./commands/query.ts";
 import { cmdRemove } from "./commands/remove.ts";
 import { cmdStatus } from "./commands/status.ts";
 import { cmdUpgrade } from "./commands/upgrade.ts";
-import { cmdBrowse } from "./commands/browse.tsx";
+import { cmdBrowse, cmdBrowsePlain } from "./commands/browse.tsx";
 import { ensureConfig } from "./core/config.ts";
 import { c } from "./ui/render.ts";
+import { isTTY } from "./utils/tty.ts";
 
 const HELP = `${c.bold}oops${c.reset} — Multi-Instance DB Management Hub
 
@@ -34,6 +35,13 @@ ${c.dim}Created by Sandi Andrian — github.com/andriansandi${c.reset}
 `;
 
 async function interactive(): Promise<void> {
+  if (!isTTY()) {
+    process.stderr.write(
+      `${c.yellow}warning:${c.reset} interactive menu requires a TTY.\n` +
+        `Run from a real terminal, or use a subcommand directly: oops help\n`,
+    );
+    process.exit(2);
+  }
   const { select } = await import("@clack/prompts");
   const cfg = ensureConfig();
   const opts = [
@@ -91,12 +99,14 @@ async function main() {
         return cmdUse(rest[0]);
       case "tables":
       case "ls-tables": {
+        if (!isTTY()) return cmdTablesPlain();
         const picked = await cmdTables();
         if (picked) return cmdBrowse(picked);
         return;
       }
       case "browse":
       case "ui":
+        if (!isTTY()) return cmdBrowsePlain(rest[0]);
         return cmdBrowse(rest[0]);
       case "describe":
       case "schema":

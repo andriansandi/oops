@@ -339,6 +339,68 @@ function TablesTui({
   );
 }
 
+export async function cmdTablesPlain(): Promise<string | null> {
+  const cfg = ensureConfig();
+  const active = getActiveInstance(cfg);
+  if (!active) {
+    p.log.warn("No active instance. Run `oops connect` or `oops use <name>`.");
+    return null;
+  }
+
+  process.stdout.write(`Reading schema from ${active.name}…\n`);
+  const adaptor = buildAdaptor(active);
+  let result: { tables: TableInfo[]; internal: TableInfo[] };
+  try {
+    result = await adaptor.listTables();
+  } catch (err) {
+    process.stderr.write(`error: ${(err as Error).message}\n`);
+    process.exit(1);
+  }
+  const all: TableInfo[] = [...result.tables, ...result.internal];
+  if (all.length === 0) {
+    process.stdout.write("(empty database)\n");
+    return null;
+  }
+
+  process.stdout.write("Counting rows…\n");
+  const tables: TableWithMeta[] = await Promise.all(
+    all.map(async (t) => {
+      try {
+        const r = await adaptor.query<{ n: number }>(COUNT_QUERY(t.name));
+        return {
+          ...t,
+          rowCount: Number(r.rows[0]?.n ?? 0),
+          internal: isInternal(t.name),
+        };
+      } catch {
+        return { ...t, rowCount: null, internal: isInternal(t.name) };
+      }
+    }),
+  );
+
+  const lines: string[] = [];
+  lines.push(
+    `${active.name} — schema (${tables.length} object(s)${result.internal.length > 0 ? `, ${result.internal.length} internal` : ""})`,
+  );
+  lines.push("");
+  lines.push("TYPE     NAME                                ROWS      SQL");
+  lines.push("─────── ─────────────────────────────────── ──────── ──────────────────────────────────────");
+  for (const t of tables) {
+    const icon = t.type === "view" ? "👁 " : "📄 ";
+    const rows = t.rowCount === null ? "     ?" : String(t.rowCount).padStart(7);
+    const summary = summarize(t.sql, 40);
+    const name = `${t.internal ? "🔒 " : ""}${t.name}`.padEnd(36).slice(0, 36);
+    lines.push(
+      `${t.type.padEnd(7)}  ${icon}${name} ${rows}  ${summary}`,
+    );
+  }
+  lines.push("");
+  lines.push("Non-interactive mode: schema dump only. Run in a real terminal for the full TUI.");
+  process.stdout.write(lines.join("\n") + "\n");
+
+  return null;
+}
+
 export async function cmdTables(): Promise<string | null> {
   const cfg = ensureConfig();
   const active = getActiveInstance(cfg);
