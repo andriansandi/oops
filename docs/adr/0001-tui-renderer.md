@@ -1,8 +1,9 @@
 # ADR 0001 — TUI renderer: Ink (React) vs pure ANSI
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-06-23
 - **Deciders:** Sandi Andrian, Kilo
+- **Accepted on:** 2026-06-23
 
 ## Context
 
@@ -104,7 +105,7 @@ tax even if unused on the hot path.
 
 ## Decision
 
-**Proposed: Option B.** Pure ANSI + `readline` for the interactive TUI
+**Accepted: Option B.** Pure ANSI + `readline` for the interactive TUI
 surfaces, keep `@clack/prompts` for one-shot prompts.
 
 Rationale:
