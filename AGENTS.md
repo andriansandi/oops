@@ -19,3 +19,6 @@ Dokumen ini mendefinisikan batas-batas pengerjaan, standarisasi teknologi, dan p
 
 ### 2. TUI Layer
 - Ketika membuat baris komponen interaktif di CLI, pastikan komponen tersebut mematuhi batasan tinggi terminal aktif agar tidak terjadi overflow teks.
+- **Renderer = pure ANSI.** Semua widget interaktif dibangun di atas `src/ui/{ansi,list,prompt,session}.ts`. **Dilarang** menambah dependensi full-screen renderer (Ink, blessed, neo-blessed, terminal-kit, React, dst.) — lihat `docs/adr/0001-tui-renderer.md` untuk alasannya.
+- **Pemisahan state vs render.** Key reducer harus pure (state + key → state) supaya bisa di-unit-test tanpa TTY. Lihat `src/__tests__/tables.test.ts` & `browse.test.ts` untuk polanya.
+- **Cleanup terminal.** Setiap TUI session (`runSession`) wajib merestore raw mode, hide→show cursor, dan melepas listener saat exit — baik pada exit normal, Ctrl-C, maupun exception.
