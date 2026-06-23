@@ -1,0 +1,17 @@
+node_modules
+dist
+.bun
+.DS_Store
+
+.env
+.env.local
+.env.*.local
+
+*.log
+npm-debug.log*
+bun-debug.log*
+
+coverage/
+*.tsbuildinfo
+
+bun.lockb
