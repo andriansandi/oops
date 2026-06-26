@@ -64,3 +64,35 @@ describe("generateForm — type mapping", () => {
     expect(f.fieldType).toBe("text");
   });
 });
+
+describe("generateForm — required", () => {
+  it("is required when NOT NULL and no default", () => {
+    const [f] = generateForm([col({ name: "title", notnull: true, dflt_value: null })]);
+    expect(f.required).toBe(true);
+  });
+
+  it("is required when NOT NULL and default is undefined", () => {
+    const [f] = generateForm([col({ name: "title", notnull: true, dflt_value: undefined })]);
+    expect(f.required).toBe(true);
+  });
+
+  it("is not required when NOT NULL but has a default", () => {
+    const [f] = generateForm([col({ name: "status", notnull: true, dflt_value: "'draft'" })]);
+    expect(f.required).toBe(false);
+  });
+
+  it("is not required when nullable (even without a default)", () => {
+    const [f] = generateForm([col({ name: "note", notnull: false, dflt_value: null })]);
+    expect(f.required).toBe(false);
+  });
+
+  it("is not required when nullable with a default", () => {
+    const [f] = generateForm([col({ name: "note", notnull: false, dflt_value: "'x'" })]);
+    expect(f.required).toBe(false);
+  });
+
+  it("carries the default through to the field spec", () => {
+    const [f] = generateForm([col({ name: "status", dflt_value: "'draft'" })]);
+    expect(f.default).toBe("'draft'");
+  });
+});

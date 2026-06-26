@@ -26,7 +26,7 @@ export function generateForm(columns: ColumnInfo[]): FieldSpec[] {
   return columns.map((c) => ({
     column: c.name,
     fieldType: mapFieldType(c.type),
-    required: false,
+    required: c.notnull && (c.dflt_value === null || c.dflt_value === undefined),
     pk: c.pk,
     default: c.dflt_value,
     label: c.name,
