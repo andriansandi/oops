@@ -1,8 +1,8 @@
 import * as p from "@clack/prompts";
 import { ensureConfig, getActiveInstance } from "../core/config.ts";
 import { buildAdaptor } from "../core/adaptor-factory.ts";
-import { renderTable } from "../ui/render.ts";
-import { c } from "../ui/render.ts";
+import { renderTable, c } from "../ui/render.ts";
+import { classifySql } from "../policy.ts";
 
 export async function cmdQuery(sql: string | undefined): Promise<void> {
   const cfg = ensureConfig();
@@ -16,13 +16,13 @@ export async function cmdQuery(sql: string | undefined): Promise<void> {
     process.exit(1);
   }
 
-  const isDestructive = /\b(DELETE|DROP|UPDATE|INSERT|REPLACE|ALTER|CREATE|TRUNCATE)\b/i.test(
-    sql,
-  );
-  if (isDestructive) {
-    const ok = await p.confirm({
-      message: `${c.yellow}Heads up:${c.reset} this query modifies data. Proceed?`,
-    });
+  const { level, operation } = classifySql(sql);
+  if (level !== "safe") {
+    const destructive = level === "destructive";
+    const label = destructive
+      ? `${c.red}${c.bold}Destructive:${c.reset} ${operation} will modify schema. Proceed?`
+      : `${c.yellow}Heads up:${c.reset} ${operation} modifies data. Proceed?`;
+    const ok = await p.confirm({ message: label });
     if (p.isCancel(ok) || !ok) {
       p.log.info("Aborted.");
       return;
