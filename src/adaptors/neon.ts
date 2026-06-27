@@ -1,8 +1,4 @@
-import {
-  neon,
-  type NeonQueryFunction,
-  type FullQueryResults,
-} from "@neondatabase/serverless";
+import { neon, type FullQueryResults } from "@neondatabase/serverless";
 import {
   BaseAdaptor,
   type ColumnInfo,
@@ -26,13 +22,25 @@ export function toDollarPlaceholders(
   return sql.replace(/\?/g, () => `$${++i}`);
 }
 
+export interface NeonSqlLike {
+  query(
+    query: string,
+    params: unknown[],
+    opts?: { fetchOptions?: { signal?: AbortSignal } },
+  ): Promise<FullQueryResults<false>>;
+}
+
 export class NeonAdaptor extends BaseAdaptor {
   readonly type = "neon" as const;
-  private readonly sql: NeonQueryFunction<false, true>;
+  private readonly sql: NeonSqlLike;
 
-  constructor(instance: InstanceMeta, creds: NeonCredentials) {
+  constructor(
+    instance: InstanceMeta,
+    creds: NeonCredentials,
+    sql?: NeonSqlLike,
+  ) {
     super(instance);
-    this.sql = neon(creds.connectionString, { fullResults: true });
+    this.sql = sql ?? neon(creds.connectionString, { fullResults: true });
   }
 
   private exec(
@@ -83,9 +91,6 @@ export class NeonAdaptor extends BaseAdaptor {
     table: string,
     opts: QueryOptions = {},
   ): Promise<ColumnInfo[]> {
-    if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(table)) {
-      throw new Error(`Invalid table identifier: ${table}`);
-    }
     const [cols, pks] = await Promise.all([
       this.exec(
         `SELECT column_name, data_type, is_nullable, column_default
