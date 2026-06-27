@@ -58,7 +58,7 @@ bun install
 Run it in place:
 
 ```sh
-bun run src/index.ts help
+bun run packages/cli/src/index.ts help
 # or
 bun run dev help
 ```
@@ -66,7 +66,7 @@ bun run dev help
 For a global `oops` command, symlink the entrypoint:
 
 ```sh
-ln -s "$(pwd)/src/index.ts" ~/.local/bin/oops
+ln -s "$(pwd)/packages/cli/src/index.ts" ~/.local/bin/oops
 ```
 
 ---
@@ -209,47 +209,63 @@ Redeem a key with `oops license <key>`. Verification hits the endpoint with a
 
 ## Project structure
 
+The repo is a **Bun workspace** with two packages. `@oops/core` holds the
+runtime-portable adaptor layer (no `bun-types`, safe for Cloudflare Workers);
+`@oops/cli` holds the TUI CLI. See [`docs/adr/0002-cloud-architecture.md`](docs/adr/0002-cloud-architecture.md).
+
 ```
-src/
-├── index.ts              # CLI entrypoint, dispatch & interactive menu
-├── policy.ts             # SQL safety classifier (safe / confirm / destructive)
-├── core/
-│   ├── adaptor.ts        # BaseAdaptor abstract class, QueryTimeoutError, withTimeout
-│   ├── adaptor-factory.ts# instance record → concrete adaptor
-│   ├── config.ts         # ~/.config/oops/config.json, instance guard, tiers
-│   └── license.ts        # online license verification
-├── adaptors/
-│   ├── d1.ts             # Cloudflare D1 adaptor (REST API)
-│   └── neon.ts           # Neon Postgres adaptor (@neondatabase/serverless)
-├── commands/             # one file per command (connect, browse, insert, …)
-├── forms/
-│   ├── generator.ts      # ColumnInfo[] → FieldSpec[] (type-aware form)
-│   └── sql-builder.ts    # coerceValue, buildInsert, buildUpdate (parameterized)
-├── ui/
-│   ├── ansi.ts           # ANSI escape helpers (cursor, color, style)
-│   ├── list.ts           # paginated list primitive
-│   ├── prompt.ts         # readline key decoder
-│   ├── session.ts        # runSession — raw-mode lifecycle & cleanup
-│   └── render.ts         # renderTable, maskSecret, color constants
-└── __tests__/            # TDD — 144 tests, pure state-machine reducers
+packages/
+├── core/                       # @oops/core — runtime-portable adaptor layer
+│   ├── src/
+│   │   ├── adaptor.ts          # BaseAdaptor, QueryTimeoutError, withTimeout, isInternalD1Name
+│   │   ├── adaptor-factory.ts  # instance record → concrete adaptor
+│   │   ├── instance.ts         # credential & instance types (D1/Neon/InstanceRecord)
+│   │   ├── adaptors/
+│   │   │   ├── d1.ts           # Cloudflare D1 adaptor (REST API)
+│   │   │   └── neon.ts         # Neon Postgres adaptor (@neondatabase/serverless)
+│   │   ├── index.ts            # barrel re-export (public API)
+│   │   └── __tests__/          # adaptor + neon tests
+│   ├── package.json            # @oops/core
+│   ├── tsconfig.json           # types:[] portability guard (no bun-types)
+│   └── tsconfig.test.json      # bun-types for tests only
+└── cli/                        # @oops/cli — the TUI CLI
+    ├── src/
+    │   ├── index.ts            # CLI entrypoint, dispatch & interactive menu
+    │   ├── policy.ts           # SQL safety classifier (safe / confirm / destructive)
+    │   ├── core/
+    │   │   ├── config.ts       # ~/.config/oops/config.json, instance guard, tiers
+    │   │   └── license.ts      # online license verification
+    │   ├── commands/           # one file per command (connect, browse, insert, …)
+    │   ├── forms/
+    │   │   ├── generator.ts    # ColumnInfo[] → FieldSpec[] (type-aware form)
+    │   │   └── sql-builder.ts  # coerceValue, buildInsert, buildUpdate (parameterized)
+    │   ├── ui/
+    │   │   ├── ansi.ts         # ANSI escape helpers (cursor, color, style)
+    │   │   ├── list.ts         # paginated list primitive
+    │   │   ├── prompt.ts       # readline key decoder
+    │   │   ├── session.ts      # runSession — raw-mode lifecycle & cleanup
+    │   │   └── render.ts       # renderTable, maskSecret, color constants
+    │   └── __tests__/          # TDD — pure state-machine reducers
+    ├── package.json            # @oops/cli (bin: oops)
+    └── tsconfig.json           # extends base, bun-types
 ```
 
 ### Adding a database adaptor
 
-New adaptors extend `BaseAdaptor` (`src/core/adaptor.ts`) and implement
+New adaptors extend `BaseAdaptor` (`packages/core/src/adaptor.ts`) and implement
 `testConnection`, `listTables`, `describeTable`, and `query`. Every query is
 wrapped with a **5000 ms timeout** (`withTimeout`) so a flaky network can never
-freeze the CLI. Register the new type in `adaptor-factory.ts`.
+freeze the CLI. Register the new type in `packages/core/src/adaptor-factory.ts`.
 
 ---
 
 ## Development
 
 ```sh
-bun install          # install deps
+bun install          # install deps (links workspace packages)
 bun run dev          # run the CLI
-bun run typecheck    # tsc --noEmit
-bun test             # run the full suite (144 tests)
+bun run typecheck    # tsc --noEmit (cli + core source + core tests)
+bun test             # run the full suite (158 tests)
 ```
 
 ### Conventions
