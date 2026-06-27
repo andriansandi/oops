@@ -1,0 +1,13 @@
+{
+  "name": "@oops/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "oops": "./src/index.ts"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "@oops/core": "workspace:*"
+  }
+}

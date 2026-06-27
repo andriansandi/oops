@@ -4,19 +4,11 @@
   "description": "Multi-Instance DB Management Hub — TUI for Cloudflare D1 & friends",
   "type": "module",
   "workspaces": ["packages/*"],
-  "module": "src/index.ts",
-  "bin": {
-    "oops": "src/index.ts"
-  },
   "scripts": {
-    "dev": "bun run src/index.ts",
-    "start": "bun run src/index.ts",
-    "typecheck": "bun --bun tsc --noEmit && bun --bun tsc -p packages/core/tsconfig.json",
+    "dev": "bun run packages/cli/src/index.ts",
+    "start": "bun run packages/cli/src/index.ts",
+    "typecheck": "bun --bun tsc -p packages/cli/tsconfig.json && bun --bun tsc -p packages/core/tsconfig.json",
     "test": "bun test"
-  },
-  "dependencies": {
-    "@clack/prompts": "^0.7.0",
-    "@oops/core": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "latest",

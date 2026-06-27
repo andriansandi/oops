@@ -4,14 +4,21 @@
   "workspaces": {
     "": {
       "name": "oops",
-      "dependencies": {
-        "@clack/prompts": "^0.7.0",
-        "@oops/core": "workspace:*",
-      },
       "devDependencies": {
         "@types/bun": "latest",
         "bun-types": "1.3.14",
         "typescript": "^5.4.0",
+      },
+    },
+    "packages/cli": {
+      "name": "@oops/cli",
+      "version": "0.1.0",
+      "bin": {
+        "oops": "./src/index.ts",
+      },
+      "dependencies": {
+        "@clack/prompts": "^0.7.0",
+        "@oops/core": "workspace:*",
       },
     },
     "packages/core": {
@@ -28,6 +35,8 @@
     "@clack/prompts": ["@clack/prompts@0.7.0", "", { "dependencies": { "@clack/core": "^0.3.3", "is-unicode-supported": "*", "picocolors": "^1.0.0", "sisteransi": "^1.0.5" } }, "sha512-0MhX9/B4iL6Re04jPrttDm+BsP8y6mS7byuv0BvXgdXhbV5PdlsHt55dvNsuBCPZ7xq1oTAOOuotR9NFbQyMSA=="],
 
     "@neondatabase/serverless": ["@neondatabase/serverless@1.1.0", "", {}, "sha512-r3ZZhRjEcfEdKIZnoB1RusNgvHuaBRqfCzV4Gi+5A9yUX0S4HTws/ASWqt13wL4y4I+0rqsWGdA2w7EQXHi3+Q=="],
+
+    "@oops/cli": ["@oops/cli@workspace:packages/cli"],
 
     "@oops/core": ["@oops/core@workspace:packages/core"],
 
