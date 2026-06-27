@@ -6,15 +6,7 @@ import type {
   D1Credentials,
   NeonCredentials,
   InstanceRecord,
-} from "./instance.ts";
-
-export type {
-  D1Credentials,
-  NeonCredentials,
-  D1InstanceRecord,
-  NeonInstanceRecord,
-  InstanceRecord,
-} from "./instance.ts";
+} from "@oops/core";
 
 export interface OopsConfig {
   version: 1;

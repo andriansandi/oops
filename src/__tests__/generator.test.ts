@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { generateForm } from "../forms/generator.ts";
-import type { ColumnInfo } from "../core/adaptor.ts";
+import type { ColumnInfo } from "@oops/core";
 
 function col(over: Partial<ColumnInfo> = {}): ColumnInfo {
   return {

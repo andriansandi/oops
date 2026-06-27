@@ -2,10 +2,10 @@ import { describe, expect, it } from "bun:test";
 import {
   NeonAdaptor,
   toDollarPlaceholders,
-} from "../adaptors/neon.ts";
+  type InstanceMeta,
+  type NeonCredentials,
+} from "@oops/core";
 import type { FullQueryResults } from "@neondatabase/serverless";
-import type { InstanceMeta } from "../core/adaptor.ts";
-import type { NeonCredentials } from "../core/config.ts";
 
 describe("toDollarPlaceholders", () => {
   it("leaves SQL unchanged when there are no params (raw query path)", () => {

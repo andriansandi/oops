@@ -1,6 +1,6 @@
 import * as p from "@clack/prompts";
 import { ensureConfig, getActiveInstance } from "../core/config.ts";
-import { buildAdaptor } from "../core/adaptor-factory.ts";
+import { buildAdaptor } from "@oops/core";
 import { renderTable } from "../ui/render.ts";
 
 export async function cmdDescribe(table: string | undefined): Promise<void> {

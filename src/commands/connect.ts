@@ -3,12 +3,14 @@ import {
   addInstance,
   ensureConfig,
   FREE_INSTANCE_LIMIT,
-  type D1Credentials,
-  type NeonCredentials,
   type OopsRecord,
 } from "../core/config.ts";
-import { buildAdaptor } from "../core/adaptor-factory.ts";
-import type { BaseAdaptor } from "../core/adaptor.ts";
+import {
+  buildAdaptor,
+  type BaseAdaptor,
+  type D1Credentials,
+  type NeonCredentials,
+} from "@oops/core";
 import { maskSecret } from "../ui/render.ts";
 
 export async function cmdConnect(): Promise<void> {

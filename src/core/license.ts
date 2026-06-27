@@ -1,4 +1,4 @@
-import { QUERY_TIMEOUT_MS } from "./adaptor.ts";
+import { QUERY_TIMEOUT_MS } from "@oops/core";
 
 export const LICENSE_VERIFY_URL = "https://api.oops.cloud/v1/license/verify";
 

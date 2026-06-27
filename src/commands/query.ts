@@ -1,6 +1,6 @@
 import * as p from "@clack/prompts";
 import { ensureConfig, getActiveInstance } from "../core/config.ts";
-import { buildAdaptor } from "../core/adaptor-factory.ts";
+import { buildAdaptor } from "@oops/core";
 import { renderTable, c } from "../ui/render.ts";
 import { classifySql } from "../policy.ts";
 

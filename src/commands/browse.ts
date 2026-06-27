@@ -1,6 +1,6 @@
 import * as p from "@clack/prompts";
 import { ensureConfig, getActiveInstance } from "../core/config.ts";
-import { buildAdaptor } from "../core/adaptor-factory.ts";
+import { buildAdaptor } from "@oops/core";
 import { runSession } from "../ui/session.ts";
 import { style } from "../ui/ansi.ts";
 import type { KeyEvent } from "../ui/prompt.ts";

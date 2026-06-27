@@ -1,4 +1,4 @@
-import type { ColumnInfo } from "../core/adaptor.ts";
+import type { ColumnInfo } from "@oops/core";
 
 export type FieldType = "text" | "integer" | "number" | "boolean" | "json";
 

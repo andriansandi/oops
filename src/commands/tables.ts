@@ -1,8 +1,11 @@
 import * as p from "@clack/prompts";
 import { ensureConfig, getActiveInstance } from "../core/config.ts";
-import { buildAdaptor } from "../core/adaptor-factory.ts";
-import type { ColumnInfo, TableInfo } from "../core/adaptor.ts";
-import type { BaseAdaptor } from "../core/adaptor.ts";
+import {
+  buildAdaptor,
+  type BaseAdaptor,
+  type ColumnInfo,
+  type TableInfo,
+} from "@oops/core";
 import { createList, type List } from "../ui/list.ts";
 import { runSession } from "../ui/session.ts";
 import { style } from "../ui/ansi.ts";
