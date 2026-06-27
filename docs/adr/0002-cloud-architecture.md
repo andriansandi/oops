@@ -1,9 +1,12 @@
 # ADR 0002 — Cloud architecture: monorepo, Workers, shared adaptor core
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-06-27
 - **Deciders:** Sandi Andrian
-- **Accepted on:** _(not yet — awaiting review)_
+- **Accepted on:** 2026-06-27 — after a Standards + Spec review of commits
+  `55fa32e` + `4b4c8c0` found no blockers. Spec items deferred to ADRs 0003-0006
+  by design; two orthogonal follow-ups logged from the Neon commit (Neon
+  Pro-gating product decision; `describeTable` identifier-guard latent bug).
 
 ## Context
 
