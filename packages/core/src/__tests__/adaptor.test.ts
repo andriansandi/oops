@@ -4,7 +4,7 @@ import {
   QueryTimeoutError,
   isInternalD1Name,
   withTimeout,
-} from "@oops/core";
+} from "../adaptor.ts";
 
 describe("withTimeout", () => {
   it("resolves with the value when the promise settles under the deadline", async () => {

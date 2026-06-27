@@ -1,10 +1,7 @@
 import { describe, expect, it } from "bun:test";
-import {
-  NeonAdaptor,
-  toDollarPlaceholders,
-  type InstanceMeta,
-  type NeonCredentials,
-} from "@oops/core";
+import { NeonAdaptor, toDollarPlaceholders } from "../adaptors/neon.ts";
+import type { InstanceMeta } from "../adaptor.ts";
+import type { NeonCredentials } from "../instance.ts";
 import type { FullQueryResults } from "@neondatabase/serverless";
 
 describe("toDollarPlaceholders", () => {

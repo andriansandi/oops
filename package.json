@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "bun run packages/cli/src/index.ts",
     "start": "bun run packages/cli/src/index.ts",
-    "typecheck": "bun --bun tsc -p packages/cli/tsconfig.json && bun --bun tsc -p packages/core/tsconfig.json",
+    "typecheck": "bun --bun tsc -p packages/cli/tsconfig.json && bun --bun tsc -p packages/core/tsconfig.json && bun --bun tsc -p packages/core/tsconfig.test.json",
     "test": "bun test"
   },
   "devDependencies": {
