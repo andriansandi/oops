@@ -35,7 +35,7 @@ export const INTERNAL_D1_PATTERNS: readonly RegExp[] = [
   /^_cf_METADATA$/i,
   /^_cf_METADATA_KEY$/i,
   /^d1_migrations$/i,
-  /^sqlite_%/i,
+  /^sqlite_/i,
 ];
 
 export function isInternalD1Name(name: string): boolean {

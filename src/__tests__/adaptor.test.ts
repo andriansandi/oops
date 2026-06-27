@@ -1,5 +1,10 @@
 import { describe, expect, it } from "bun:test";
-import { QueryTimeoutError, withTimeout } from "../core/adaptor.ts";
+import {
+  INTERNAL_D1_PATTERNS,
+  QueryTimeoutError,
+  isInternalD1Name,
+  withTimeout,
+} from "../core/adaptor.ts";
 
 describe("withTimeout", () => {
   it("resolves with the value when the promise settles under the deadline", async () => {
@@ -40,5 +45,40 @@ describe("withTimeout", () => {
     await expect(
       withTimeout(Promise.resolve("late"), 1000, ac.signal),
     ).rejects.toThrow("Aborted");
+  });
+});
+
+describe("isInternalD1Name", () => {
+  it("flags the Cloudflare-internal D1 table names", () => {
+    for (const name of ["_cf_KV", "_cf_METADATA", "_cf_METADATA_KEY"]) {
+      expect(isInternalD1Name(name)).toBe(true);
+    }
+  });
+
+  it("flags d1_migrations and the sqlite_ family", () => {
+    expect(isInternalD1Name("d1_migrations")).toBe(true);
+    expect(isInternalD1Name("sqlite_sequence")).toBe(true);
+    expect(isInternalD1Name("sqlite_schema")).toBe(true);
+  });
+
+  it("matches case-insensitively", () => {
+    expect(isInternalD1Name("D1_MIGRATIONS")).toBe(true);
+    expect(isInternalD1Name("_CF_KV")).toBe(true);
+    expect(isInternalD1Name("SQLITE_sequence")).toBe(true);
+  });
+
+  it("does not flag ordinary user tables", () => {
+    for (const name of ["users", "orders", "my_table", "audit_log"]) {
+      expect(isInternalD1Name(name)).toBe(false);
+    }
+  });
+
+  it("requires an exact match for the fixed names (not a prefix)", () => {
+    expect(isInternalD1Name("_cf_KV_extra")).toBe(false);
+    expect(isInternalD1Name("d1_migrations_backup")).toBe(false);
+  });
+
+  it("exposes the INTERNAL_D1_PATTERNS list", () => {
+    expect(INTERNAL_D1_PATTERNS.length).toBe(5);
   });
 });
