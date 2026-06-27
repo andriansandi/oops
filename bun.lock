@@ -6,7 +6,7 @@
       "name": "oops",
       "dependencies": {
         "@clack/prompts": "^0.7.0",
-        "@neondatabase/serverless": "^1.1.0",
+        "@oops/core": "workspace:*",
       },
       "devDependencies": {
         "@types/bun": "latest",
@@ -17,6 +17,9 @@
     "packages/core": {
       "name": "@oops/core",
       "version": "0.1.0",
+      "dependencies": {
+        "@neondatabase/serverless": "^1.1.0",
+      },
     },
   },
   "packages": {

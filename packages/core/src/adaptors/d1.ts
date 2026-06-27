@@ -10,8 +10,8 @@ import {
   withTimeout,
   QUERY_TIMEOUT_MS,
   isInternalD1Name,
-} from "../core/adaptor.ts";
-import type { D1Credentials } from "../core/instance.ts";
+} from "../adaptor.ts";
+import type { D1Credentials } from "../instance.ts";
 
 const CF_API = "https://api.cloudflare.com/client/v4";
 
