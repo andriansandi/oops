@@ -11,7 +11,7 @@ import {
   withTimeout,
   QUERY_TIMEOUT_MS,
 } from "../core/adaptor.ts";
-import type { NeonCredentials } from "../core/config.ts";
+import type { NeonCredentials } from "../core/instance.ts";
 
 export function toDollarPlaceholders(
   sql: string,

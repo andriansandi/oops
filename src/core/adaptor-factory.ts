@@ -1,4 +1,4 @@
-import type { InstanceRecord } from "../core/config.ts";
+import type { InstanceRecord } from "./instance.ts";
 import { D1Adaptor } from "../adaptors/d1.ts";
 import { NeonAdaptor } from "../adaptors/neon.ts";
 import { BaseAdaptor } from "../core/adaptor.ts";

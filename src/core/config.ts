@@ -2,33 +2,19 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync, chmodSync } from "n
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-export interface D1Credentials {
-  accountId: string;
-  databaseId: string;
-  apiToken: string;
-}
+import type {
+  D1Credentials,
+  NeonCredentials,
+  InstanceRecord,
+} from "./instance.ts";
 
-export interface NeonCredentials {
-  connectionString: string;
-}
-
-export interface D1InstanceRecord {
-  id: string;
-  name: string;
-  type: "d1";
-  credentials: D1Credentials;
-  createdAt: string;
-}
-
-export interface NeonInstanceRecord {
-  id: string;
-  name: string;
-  type: "neon";
-  credentials: NeonCredentials;
-  createdAt: string;
-}
-
-export type InstanceRecord = D1InstanceRecord | NeonInstanceRecord;
+export type {
+  D1Credentials,
+  NeonCredentials,
+  D1InstanceRecord,
+  NeonInstanceRecord,
+  InstanceRecord,
+} from "./instance.ts";
 
 export interface OopsConfig {
   version: 1;
