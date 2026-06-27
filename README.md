@@ -5,8 +5,9 @@ your schema and gives you interactive table browsing, dynamic CRUD forms, and a
 safe SQL console — all from a single Bun-powered CLI with **zero full-screen
 renderer dependencies**.
 
-Built for [Cloudflare D1](https://developers.cloudflare.com/d1/) today; a
-pluggable adaptor layer means Neon (Postgres) and friends are on the roadmap.
+Built for [Cloudflare D1](https://developers.cloudflare.com/d1/) and
+[Neon](https://neon.tech) (Postgres); a pluggable adaptor layer means more
+backends are easy to add.
 
 > No schema migrations, no table creation. `oops` adapts to *your* database,
 > never the other way around.
@@ -29,7 +30,7 @@ pluggable adaptor layer means Neon (Postgres) and friends are on the roadmap.
   into `safe` / `confirm` (data-modifying) / `destructive` (schema-modifying)
   and prompts accordingly — including across multi-statement and `WITH ...`
   queries.
-- **Multi-instance, one config.** Manage many D1 databases from one machine.
+- **Multi-instance, one config.** Manage many D1 & Neon databases from one machine.
   Credentials live in `~/.config/oops/config.json` at `chmod 600`.
 - **Offline-friendly tier model.** Free tier caps at 5 instances; `pro` /
   `enterprise` unlock unlimited instances and are activated by redeeming a
@@ -73,7 +74,7 @@ ln -s "$(pwd)/src/index.ts" ~/.local/bin/oops
 ## Quick start
 
 ```sh
-# 1. Add a D1 instance (interactive — asks for Account ID, Database ID, API token)
+# 1. Add an instance (interactive — D1: Account ID/Database ID/Token · Neon: connection string)
 oops connect
 
 # 2. See what you've got
@@ -102,7 +103,7 @@ With no arguments, `oops` opens an interactive menu.
 | Command | Alias | Description |
 |---|---|---|
 | `oops` | — | Interactive menu |
-| `oops connect` | `add` | Add a Cloudflare D1 instance |
+| `oops connect` | `add` | Add a database instance (D1 or Neon) |
 | `oops list` | `ls` | List configured instances |
 | `oops use [name]` | — | Switch the active instance |
 | `oops status` | — | Show config, license & instance summary |
@@ -197,7 +198,7 @@ The key reducers (`browseKeyReducer`, `tablesKeyReducer`) are pure
 | Tier | Instances | Adaptors |
 |---|---|---|
 | `free` | up to 5 | D1 |
-| `pro` | unlimited | D1, Neon (roadmap) |
+| `pro` | unlimited | D1, Neon |
 | `enterprise` | unlimited | D1, Neon + cloud dashboard (roadmap) |
 
 Redeem a key with `oops license <key>`. Verification hits the endpoint with a
@@ -218,7 +219,8 @@ src/
 │   ├── config.ts         # ~/.config/oops/config.json, instance guard, tiers
 │   └── license.ts        # online license verification
 ├── adaptors/
-│   └── d1.ts             # Cloudflare D1 adaptor (REST API)
+│   ├── d1.ts             # Cloudflare D1 adaptor (REST API)
+│   └── neon.ts           # Neon Postgres adaptor (@neondatabase/serverless)
 ├── commands/             # one file per command (connect, browse, insert, …)
 ├── forms/
 │   ├── generator.ts      # ColumnInfo[] → FieldSpec[] (type-aware form)
@@ -229,7 +231,7 @@ src/
 │   ├── prompt.ts         # readline key decoder
 │   ├── session.ts        # runSession — raw-mode lifecycle & cleanup
 │   └── render.ts         # renderTable, maskSecret, color constants
-└── __tests__/            # TDD — 137 tests, pure state-machine reducers
+└── __tests__/            # TDD — 144 tests, pure state-machine reducers
 ```
 
 ### Adding a database adaptor
@@ -247,7 +249,7 @@ freeze the CLI. Register the new type in `adaptor-factory.ts`.
 bun install          # install deps
 bun run dev          # run the CLI
 bun run typecheck    # tsc --noEmit
-bun test             # run the full suite (137 tests)
+bun test             # run the full suite (144 tests)
 ```
 
 ### Conventions
@@ -265,7 +267,7 @@ bun test             # run the full suite (137 tests)
 
 See [`ROADMAP.md`](ROADMAP.md) for the full plan. Highlights:
 
-- **Track 1 (CLI):** D1 CRUD ✅ · Neon adaptor · instance guard & licensing
+- **Track 1 (CLI):** D1 + Neon adaptors ✅ · instance guard & licensing
 - **Track 2 (Cloud):** multi-tenant Cloudflare Workers backend, web dashboard,
   team workspaces, audit log & automated backups
 

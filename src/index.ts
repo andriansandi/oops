@@ -19,7 +19,7 @@ const HELP = `${c.bold}oops${c.reset} — Multi-Instance DB Management Hub
 
 ${c.bold}Usage:${c.reset}
   oops                     interactive menu
-  oops connect             add a new D1 instance (interactive)
+  oops connect             add a new database instance (interactive)
   oops list                list configured instances
   oops use [name]          switch active instance
   oops status              show current config summary
@@ -50,7 +50,7 @@ async function interactive(): Promise<void> {
   const { select } = await import("@clack/prompts");
   const cfg = ensureConfig();
   const opts = [
-    { value: "connect", label: "Add a D1 instance", hint: "connect" },
+    { value: "connect", label: "Add a database instance", hint: "connect" },
     { value: "list", label: "List instances", hint: "list" },
     { value: "use", label: "Switch active instance", hint: "use", disabled: cfg.instances.length === 0 },
     { value: "tables", label: "List tables", hint: "tables", disabled: cfg.instances.length === 0 },

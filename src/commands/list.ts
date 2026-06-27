@@ -1,5 +1,5 @@
 import * as p from "@clack/prompts";
-import { ensureConfig, getActiveInstance } from "../core/config.ts";
+import { ensureConfig, getActiveInstance, instanceHint } from "../core/config.ts";
 import { c } from "../ui/render.ts";
 
 export async function cmdList(): Promise<void> {
@@ -20,7 +20,7 @@ export async function cmdList(): Promise<void> {
     const isActive = inst.id === active?.id;
     const marker = isActive ? `${c.green}●${c.reset}` : `${c.dim}○${c.reset}`;
     const label = isActive ? `${c.bold}${inst.name}${c.reset}` : inst.name;
-    const db = `${c.dim}${inst.credentials.databaseId.slice(0, 8)}…${c.reset}`;
+    const db = `${c.dim}${instanceHint(inst)}${c.reset}`;
     const type = `${c.cyan}[${inst.type}]${c.reset}`;
     lines.push(`  ${marker} ${label}  ${type}  ${db}`);
   }

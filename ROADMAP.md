@@ -10,28 +10,29 @@ Jalur 2 memperluas fungsionalitas ke dashboard berbasis Cloud (Web Dashboard) la
 *Fokus: Produktivitas developer langsung di terminal, startup instan dengan Bun, integrasi Cloudflare D1, dan batasan instance lokal.*
 
 ### Phase 1.1: Fondasi & Konektivitas Cloudflare D1 (Free Tier)
-- [ ] Inisialisasi lingkungan proyek menggunakan **Bun** dan **TypeScript**.
-- [ ] Konfigurasi CLI Command Parser menggunakan library interaktif (misalnya `@clack/prompts`).
-- [ ] Implementasi **Cloudflare D1 Adaptor** via Cloudflare REST API (menggunakan Global API Key atau Cloudflare Workers Token).
-- [ ] Menyediakan media penyimpanan kredensial lokal yang aman dan terisolasi di file `~/.config/oops/config.json`.
-- [ ] Membangun fitur introspeksi database otomatis untuk membaca tabel yang sudah ada (`SELECT name FROM sqlite_master WHERE type='table'`).
+- [x] Inisialisasi lingkungan proyek menggunakan **Bun** dan **TypeScript**.
+- [x] Konfigurasi CLI Command Parser menggunakan library interaktif (misalnya `@clack/prompts`).
+- [x] Implementasi **Cloudflare D1 Adaptor** via Cloudflare REST API (menggunakan Global API Key atau Cloudflare Workers Token).
+- [x] Menyediakan media penyimpanan kredensial lokal yang aman dan terisolasi di file `~/.config/oops/config.json`.
+- [x] Membangun fitur introspeksi database otomatis untuk membaca tabel yang sudah ada (`SELECT name FROM sqlite_master WHERE type='table'`).
 
 ### Phase 1.2: Visualisasi TUI Interaktif & Render Data (Free Tier)
-- [ ] Integrasi engine visualisasi teks (seperti library **Ink** untuk React di terminal atau pure ANSI escape sequences).
-- [ ] Membuat component rendering tabel yang rapi (`cli-table3`) dengan auto-padding dan pembatasan lebar teks jika kolom terlalu panjang.
-- [ ] Implementasi navigasi tabel interaktif menggunakan tombol panah keyboard (`Up`, `Down`, `Left`, `Right`) dan tombol `Enter`.
-- [ ] Menambahkan fitur pencarian/filter teks langsung di terminal terhadap data tabel yang sedang aktif.
+- [x] Integrasi engine visualisasi teks berbasis **pure ANSI escape sequences** di atas `readline` (lihat `docs/adr/0001-tui-renderer.md`; Ink/React ditolak).
+- [x] Membuat component rendering tabel in-house (`src/ui/render.ts`) dengan auto-padding dan pembatasan lebar teks jika kolom terlalu panjang.
+- [x] Implementasi navigasi tabel interaktif menggunakan tombol panah keyboard (`Up`, `Down`, `Left`, `Right`) dan tombol `Enter`.
+- [x] Menambahkan fitur pencarian/filter teks langsung di terminal terhadap data tabel yang sedang aktif.
 
 ### Phase 1.3: Operasi CRUD Dinamis & Validasi (Free Tier)
-- [ ] Membuat generator form input dinamis di CLI yang membaca tipe data kolom (`TEXT`, `INTEGER`, `BOOLEAN`) untuk memunculkan jenis input prompt yang sesuai.
-- [ ] Implementasi fungsi untuk menambah data (`Create`) dan mengubah baris data (`Update`) secara aman.
-- [ ] Menambahkan sistem "Confirmation Prompt" sebelum menjalankan instruksi destruktif (seperti `DELETE ROW` atau `DROP TABLE`).
+- [x] Membuat generator form input dinamis di CLI yang membaca tipe data kolom (`TEXT`, `INTEGER`, `BOOLEAN`) untuk memunculkan jenis input prompt yang sesuai.
+- [x] Implementasi fungsi untuk menambah data (`Create`) dan mengubah baris data (`Update`) secara aman.
+- [x] Menambahkan sistem "Confirmation Prompt" sebelum menjalankan instruksi destruktif (seperti `DELETE ROW` atau `DROP TABLE`).
 
 ### Phase 1.4: Dukungan Multi-Database & Sistem Pembatasan Instance (Monetisasi CLI)
-- [ ] Refactor struktur kode agar arsitektur database bersifat *pluggable* (bisa dipasang adaptor baru dengan mudah).
-- [ ] Membuat adaptor untuk **Neon (Serverless Postgres)** menggunakan driver `pg` standar via WebSocket/connection pooling.
-- [ ] **Instance Guard:** Mengunci konfigurasi lokal maksimal hanya bisa menyimpan **5 instance database aktif** untuk pengguna gratis.
-- [ ] Menambahkan perintah `oops upgrade` yang mengarahkan user ke halaman web untuk memasukkan license key agar bisa mengelola instance tanpa batas.
+- [x] Refactor struktur kode agar arsitektur database bersifat *pluggable* (bisa dipasang adaptor baru dengan mudah).
+- [x] Membuat adaptor untuk **Neon (Serverless Postgres)** menggunakan driver `@neondatabase/serverless` (WebSocket/connection pooling).
+- [x] **Instance Guard:** Mengunci konfigurasi lokal maksimal hanya bisa menyimpan **5 instance database aktif** untuk pengguna gratis.
+- [x] Menambahkan perintah `oops upgrade` yang mengarahkan user ke halaman web untuk memasukkan license key agar bisa mengelola instance tanpa batas.
+- [x] Menambahkan perintah `oops license <key>` untuk menukarkan license key dan verifikasi tier online.
 
 ---
 

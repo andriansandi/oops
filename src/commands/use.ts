@@ -1,5 +1,5 @@
 import * as p from "@clack/prompts";
-import { ensureConfig, setActiveInstance } from "../core/config.ts";
+import { ensureConfig, setActiveInstance, instanceHint } from "../core/config.ts";
 
 export async function cmdUse(nameOrId: string | undefined): Promise<void> {
   const cfg = ensureConfig();
@@ -14,7 +14,7 @@ export async function cmdUse(nameOrId: string | undefined): Promise<void> {
       options: cfg.instances.map((i) => ({
         value: i.name,
         label: i.name,
-        hint: i.credentials.databaseId.slice(0, 8) + "…",
+        hint: instanceHint(i),
       })),
     });
     if (p.isCancel(choice)) return p.cancel("Cancelled.");

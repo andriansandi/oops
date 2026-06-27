@@ -4,7 +4,6 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleDetection": "force",
-    "jsx": "react-jsx",
     "allowJs": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -25,7 +24,6 @@
       "@core/*": ["./src/core/*"],
       "@adaptors/*": ["./src/adaptors/*"],
       "@commands/*": ["./src/commands/*"],
-      "@utils/*": ["./src/utils/*"],
       "@ui/*": ["./src/ui/*"]
     }
   },

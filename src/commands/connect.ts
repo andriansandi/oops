@@ -4,8 +4,11 @@ import {
   ensureConfig,
   FREE_INSTANCE_LIMIT,
   type D1Credentials,
+  type NeonCredentials,
+  type OopsRecord,
 } from "../core/config.ts";
 import { buildAdaptor } from "../core/adaptor-factory.ts";
+import type { BaseAdaptor } from "../core/adaptor.ts";
 import { maskSecret } from "../ui/render.ts";
 
 export async function cmdConnect(): Promise<void> {
@@ -18,7 +21,7 @@ export async function cmdConnect(): Promise<void> {
     process.exit(1);
   }
 
-  p.intro("Add a Cloudflare D1 instance");
+  p.intro("Add a database instance");
 
   const name = await p.text({
     message: "Instance name (used as a label)",
@@ -28,6 +31,26 @@ export async function cmdConnect(): Promise<void> {
   });
   if (p.isCancel(name)) return p.cancel("Cancelled.");
 
+  const dbType = await p.select({
+    message: "Database type",
+    options: [
+      { value: "d1", label: "Cloudflare D1 (SQLite)" },
+      { value: "neon", label: "Neon (Serverless Postgres)" },
+    ],
+  });
+  if (p.isCancel(dbType)) return p.cancel("Cancelled.");
+
+  if (dbType === "neon") {
+    if (cfg.license === "free") {
+      p.log.error("Neon adaptor requires Oops Pro. Run `oops upgrade` to unlock it.");
+      process.exit(1);
+    }
+    return connectNeon(name as string);
+  }
+  return connectD1(name as string);
+}
+
+async function connectD1(name: string): Promise<void> {
   const accountId = await p.text({
     message: "Cloudflare Account ID",
     placeholder: "32 hex chars",
@@ -60,15 +83,62 @@ export async function cmdConnect(): Promise<void> {
     apiToken: apiToken as string,
   };
 
-  const spin = p.spinner();
-  spin.start("Verifying connection to Cloudflare D1…");
   const adaptor = buildAdaptor({
     id: "preview",
-    name: name as string,
+    name,
     type: "d1",
     credentials: creds,
     createdAt: new Date().toISOString(),
   });
+  return verifyAndSave(
+    adaptor,
+    { name, type: "d1", credentials: creds },
+    "Verifying connection to Cloudflare D1…",
+    "Cloudflare rejected the credentials.",
+    creds.apiToken,
+  );
+}
+
+async function connectNeon(name: string): Promise<void> {
+  const connectionString = await p.text({
+    message: "Neon connection string",
+    placeholder: "postgresql://user:pass@ep-xxx.neon.tech/dbname?sslmode=require",
+    validate: (v) =>
+      !v || !/^postgres(?:ql)?:\/\/.+/i.test(v.trim())
+        ? "Must be a postgres:// or postgresql:// connection string"
+        : undefined,
+  });
+  if (p.isCancel(connectionString)) return p.cancel("Cancelled.");
+
+  const creds: NeonCredentials = {
+    connectionString: (connectionString as string).trim(),
+  };
+
+  const adaptor = buildAdaptor({
+    id: "preview",
+    name,
+    type: "neon",
+    credentials: creds,
+    createdAt: new Date().toISOString(),
+  });
+  return verifyAndSave(
+    adaptor,
+    { name, type: "neon", credentials: creds },
+    "Verifying connection to Neon…",
+    "Neon rejected the connection string.",
+    creds.connectionString,
+  );
+}
+
+async function verifyAndSave(
+  adaptor: BaseAdaptor,
+  record: OopsRecord,
+  verifyLabel: string,
+  failMsg: string,
+  secretForMask: string,
+): Promise<void> {
+  const spin = p.spinner();
+  spin.start(verifyLabel);
   let ok = false;
   try {
     ok = await adaptor.testConnection();
@@ -79,20 +149,15 @@ export async function cmdConnect(): Promise<void> {
   }
   if (!ok) {
     spin.stop("Connection failed");
-    p.log.error("Cloudflare rejected the credentials.");
+    p.log.error(failMsg);
     process.exit(1);
   }
   spin.stop("Connection verified ✓");
 
-  const inst = addInstance({
-    name: name as string,
-    type: "d1",
-    credentials: creds,
-  });
-
+  const inst = addInstance(record);
   p.log.success(`Saved instance "${inst.name}" (id: ${inst.id.slice(0, 8)}…)`);
   p.log.info(
-    `Token stored as ${maskSecret(creds.apiToken)} in ~/.config/oops/config.json (chmod 600).`,
+    `Credentials stored as ${maskSecret(secretForMask)} in ~/.config/oops/config.json (chmod 600).`,
   );
   p.outro("Use `oops tables` to introspect the database.");
 }

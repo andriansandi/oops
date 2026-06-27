@@ -8,13 +8,27 @@ export interface D1Credentials {
   apiToken: string;
 }
 
-export interface InstanceRecord {
+export interface NeonCredentials {
+  connectionString: string;
+}
+
+export interface D1InstanceRecord {
   id: string;
   name: string;
   type: "d1";
   credentials: D1Credentials;
   createdAt: string;
 }
+
+export interface NeonInstanceRecord {
+  id: string;
+  name: string;
+  type: "neon";
+  credentials: NeonCredentials;
+  createdAt: string;
+}
+
+export type InstanceRecord = D1InstanceRecord | NeonInstanceRecord;
 
 export interface OopsConfig {
   version: 1;
@@ -103,11 +117,9 @@ export function addInstance(record: OopsRecord): InstanceRecord {
   return inst;
 }
 
-export interface OopsRecord {
-  name: string;
-  type: "d1";
-  credentials: D1Credentials;
-}
+export type OopsRecord =
+  | { name: string; type: "d1"; credentials: D1Credentials }
+  | { name: string; type: "neon"; credentials: NeonCredentials };
 
 export function removeInstance(nameOrId: string): boolean {
   const cfg = ensureConfig();
@@ -132,4 +144,16 @@ export function setActiveInstance(nameOrId: string): InstanceRecord {
   cfg.activeInstanceId = inst.id;
   saveConfig(cfg);
   return inst;
+}
+
+export function instanceHint(inst: InstanceRecord): string {
+  if (inst.type === "d1") {
+    return inst.credentials.databaseId.slice(0, 8) + "…";
+  }
+  try {
+    const host = new URL(inst.credentials.connectionString).hostname;
+    return host.length > 28 ? host.slice(0, 28) + "…" : host;
+  } catch {
+    return inst.credentials.connectionString.slice(0, 12) + "…";
+  }
 }
