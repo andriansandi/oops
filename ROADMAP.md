@@ -29,7 +29,7 @@ Jalur 2 memperluas fungsionalitas ke dashboard berbasis Cloud (Web Dashboard) la
 
 ### Phase 1.4: Dukungan Multi-Database & Sistem Pembatasan Instance (Monetisasi CLI)
 - [x] Refactor struktur kode agar arsitektur database bersifat *pluggable* (bisa dipasang adaptor baru dengan mudah).
-- [x] Membuat adaptor untuk **Neon (Serverless Postgres)** menggunakan driver `@neondatabase/serverless` (WebSocket/connection pooling).
+- [x] Membuat adaptor untuk **Neon (Serverless Postgres)** menggunakan driver `@neondatabase/serverless` (berbasis HTTP fetch, kompatibel Workers) — hanya tersedia untuk tier **Pro**.
 - [x] **Instance Guard:** Mengunci konfigurasi lokal maksimal hanya bisa menyimpan **5 instance database aktif** untuk pengguna gratis.
 - [x] Menambahkan perintah `oops upgrade` yang mengarahkan user ke halaman web untuk memasukkan license key agar bisa mengelola instance tanpa batas.
 - [x] Menambahkan perintah `oops license <key>` untuk menukarkan license key dan verifikasi tier online.
